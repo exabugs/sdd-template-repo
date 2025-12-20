@@ -35,8 +35,8 @@ ADR（Architecture Decision Record）とは、
 
 - 形式：`NNNN-title-in-kebab-case.md`
 - 例：
-  - `0001-adopt-sdd-style.md`
-  - `0002-use-single-table-design.md`
+  - `0001-adopt-sdd-and-steering.md`
+  - `0002-choose-database-technology.md`
 
 番号は **連番**とし、既存 ADR は並び替えない。
 
