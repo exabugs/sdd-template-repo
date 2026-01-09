@@ -1,4 +1,4 @@
-# Copilot Instructions（SDD / Steering）
+# Copilot Instructions
 
 このリポジトリは **SDD（Spec-Driven Development）** 方式で開発する。  
 コードは仕様の結果であり、**仕様が常に最終決定事項（Single Source of Truth）** である。
@@ -8,7 +8,7 @@ Copilot は、以下の仕様・設計・タスク・意思決定履歴を
 
 ---
 
-## リポジトリ構成（前提 / 分割SSOT）
+## リポジトリ構成
 
 ```text
 repo/
