@@ -29,7 +29,7 @@ repo/
       0001-*.md
       0002-*.md
 
-  steering/                  # 運用ガードレール（SSOT ではない）
+  steering/                  # 運用ガードレール
     README.md
     coding-style.md
     dev-workflow.md
@@ -40,7 +40,7 @@ repo/
   src/                       # アプリケーションコード
   tests/                     # テスト
 
-  copilot-instructions.md
+  copilot-instructions.md    # このファイル
   README.md
 ```
 
