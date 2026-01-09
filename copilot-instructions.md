@@ -1,4 +1,4 @@
-# Copilot Instructions（SDD / Steering）
+# Copilot Instructions
 
 このリポジトリは **SDD（Spec-Driven Development）** 方式で開発する。  
 コードは仕様の結果であり、**仕様が常に最終決定事項（Single Source of Truth）** である。
@@ -8,20 +8,19 @@ Copilot は、以下の仕様・設計・タスク・意思決定履歴を
 
 ---
 
-## リポジトリ構成（前提 / 分割SSOT）
+## リポジトリ構成
 
 ```text
 repo/
-  spec/                      # SSOT（最終決定事項）
-    requirements/            # 要件（EARS）
-      index.md               # 入口（章立て・リンク・採番ルール）
-      <domain>.md            # 例: auth.md, billing.md, admin.md ...
-    design/                  # 設計
-      index.md               # 入口（章立て・リンク・Traceability）
-      <domain>.md            # 例: auth.md, api.md, data-model.md ...
-    tasks/                   # タスク（必要に応じて分割）
-      index.md
-      <stream>.md
+  specs/                     # SSOT（最終決定事項）
+    requirements.md          # メインスペック：要件（EARS）
+    design.md                # メインスペック：設計
+    tasks.md                 # メインスペック：タスク
+    
+    <機能名>/                # 機能別サブディレクトリ（例: rest-api, auth, billing）
+      requirements.md        # 機能別要件
+      design.md              # 機能別設計
+      tasks.md               # 機能別タスク
 
   docs/
     adr/                     # ADR（Architecture Decision Record）
@@ -29,7 +28,7 @@ repo/
       0001-*.md
       0002-*.md
 
-  steering/                  # 運用ガードレール（SSOT ではない）
+  steering/                  # 運用ガードレール
     README.md
     coding-style.md
     dev-workflow.md
@@ -40,13 +39,14 @@ repo/
   src/                       # アプリケーションコード
   tests/                     # テスト
 
-  copilot-instructions.md
+  copilot-instructions.md    # このファイル
   README.md
 ```
 
-- `spec/` 配下は **常に最新・最終決定版（SSOT）**
-- `spec/*/index.md` は **入口（目次・導線・採番・方針）**
-- `spec/*/<domain>.md` は **本文（分割単位）**
+- `specs/` 配下は **常に最新・最終決定版（SSOT）**
+- `specs/` 直下の 3 文書（requirements.md / design.md / tasks.md）が **メインスペック**
+- 機能別に `specs/<機能名>/` サブディレクトリを作成し、同じ 3 文書セットで管理
+- 3 文書セットは常に同期して扱い、バラバラにしない
 - `docs/adr/` は **意思決定の履歴（追記のみ）**
 - `steering/` は **運用・規約・品質基準を定義するガードレール層**
 - コードと仕様が乖離した場合、**仕様が正** とみなす
@@ -54,6 +54,10 @@ repo/
 ---
 
 ## 仕様ドキュメントの役割（SSOT）
+
+### 言語
+- `specs/` 配下のすべてのドキュメントは **日本語** で記述する
+- コード例やコマンド例を除き、説明・要件・設計はすべて日本語とする
 
 ### requirements（要件）
 - **「何を満たすべきか」** を定義する
@@ -77,28 +81,37 @@ repo/
 本リポジトリでは、**SSOT（最終決定版の仕様）とは別レイヤ**として  
 **Steering（運用ガードレール）**を設ける。
 
+### 言語
+- `steering/` 配下のすべてのドキュメントは **日本語** で記述する
+- コード例やコマンド例を除き、運用ルール・規約・品質基準はすべて日本語とする
+
 Steering は、以下を目的とする。
 
 - 開発の進め方・判断基準・禁止事項を固定する
 - 人間および Copilot の振る舞いを一貫させる
-- 仕様（spec）や設計の内容そのものとは分離する
+- 仕様（specs）や設計の内容そのものとは分離する
 
 Steering に含めるのは **運用・規約・品質基準**のみとし、  
-要件・設計・タスクなどの**決定事項そのものは spec/ を SSOT とする**。
+要件・設計・タスクなどの**決定事項そのものは specs/ を SSOT とする**。
 
 ### Steering の配置と役割
 
 - 配置場所：`steering/`
 - Steering は参照・ガイド目的であり、仕様の本文は記載しない
-- Steering と spec の内容が矛盾する場合、**spec を正**とする
+- Steering と specs の内容が矛盾する場合、**specs を正**とする
 
 Copilot は、コード変更や判断を行う際に  
-Steering を「行動ルール」、spec を「判断根拠」として扱うこと。
+Steering を「行動ルール」、specs を「判断根拠」として扱うこと。
 
 ---
 
 ## ADR（Architecture Decision Record）運用ルール
 
+### 言語
+- `docs/adr/` 配下のすべての ADR は **日本語** で記述する
+- 技術用語や固有名詞を除き、決定内容・理由・影響はすべて日本語で記載する
+
+### 運用ルール
 - 配置場所：`docs/adr/`
 - **意思決定の履歴は上書きしない**
 - 判断が変わった場合は **新しい ADR を追加**し、旧 ADR を Superseded にする
@@ -111,18 +124,42 @@ Steering を「行動ルール」、spec を「判断根拠」として扱うこ
 
 ---
 
-## SSOT の分割ルール（requirements / design / tasks）
+## SSOT の管理ルール（3文書セット運用）
 
-本プロジェクトでは、SSOT の可読性と更新容易性を維持するため、  
-要件・設計・タスクは **分割管理**を前提とする。
+本プロジェクトでは、仕様の一貫性と可読性を維持するため、  
+**requirements.md / design.md / tasks.md の 3 文書をセット**として管理する。
 
-### 分割の目安（上限）
+### 3 文書セットの配置ルール
 
-- requirements：1ファイル **500行**を超えたら分割を検討する
-- design：1ファイル **1500行**を超えたら分割を検討する
-- index は導線に徹し、原則として **200行以下**を維持する
+- **メインスペック**：`specs/` 直下に 3 文書を配置
+- **機能別スペック**：`specs/<機能名>/` に 3 文書セットを配置
+- 機能ごとにサブディレクトリを作成し、バラバラにしない
+- 3 文書が常に揃っている状態を維持する
 
-分割後も SSOT は `spec/` に集約し、他の場所に同等の仕様本文を複製しない。
+### 分割の目安
+
+- requirements.md：1ファイル **500行**を超えたら機能分割を検討
+- design.md：1ファイル **1500行**を超えたら機能分割を検討
+- 分割後も SSOT は `specs/` に集約し、他の場所に同等の仕様本文を複製しない
+
+### 機能分割の例
+
+```text
+specs/
+  requirements.md          # システム全体要件
+  design.md                # システム全体設計
+  tasks.md                 # システム全体タスク
+  
+  rest-api/                # REST API 機能
+    requirements.md
+    design.md
+    tasks.md
+  
+  auth/                    # 認証機能
+    requirements.md
+    design.md
+    tasks.md
+```
 
 ---
 
